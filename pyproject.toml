@@ -4,4 +4,20 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "geopandas>=1.2.0",
+    "marimo>=0.25.2",
+    "pandas>=3.1.0",
+    "plotly>=7.1.0",
+    "pyarrow>=16.0.0",
+    "folium>=0.20.0",
+]
+
+[tool.ty.environment]
+python = "./.venv"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.2",
+]
+
