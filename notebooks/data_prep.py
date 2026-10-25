@@ -7,6 +7,7 @@ with app.setup:
     import marimo as mo
 
     from pathlib import Path
+    from typing import Any, cast
     from zipfile import ZipFile
 
     import pandas as pd
@@ -275,7 +276,7 @@ def assign_line_codes(df: pd.DataFrame) -> pd.DataFrame:
             row.stop_set,
             row.train_name,
         )
-        for row in trip_meta.itertuples(index=False)
+        for row in cast(Any, trip_meta.itertuples(index=False))
     ]
     codes = trip_meta.set_index("trip_id")["line_code"]
     return df.assign(line_code=df["trip_id"].map(codes))
@@ -323,6 +324,44 @@ def schedule(stop_times, stops, trips):
 def _(schedule):
     mo.ui.dataframe(schedule)
     return
+
+
+@app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    ### Kolejność stacji
+    """)
+    return
+
+
+@app.cell
+def _(schedule):
+    # Utwórz ramkę danych z line_code oraz listą przystanków w kolejności (dla tras, gdzie stop_sequence kończy się na największej liczbie)
+    # Załóżmy, że 'schedule' jest dostępny.
+
+    # Najwyższy stop_sequence dla każdej linii (line_code) oraz trip_id
+    last_stops = (
+        schedule.groupby(["line_code", "trip_id"])["stop_sequence"].max().reset_index()
+    )
+
+    # Wybierz dla każdej linii (line_code) taki trip_id, który ma największy stop_sequence
+    idx = last_stops.groupby("line_code")["stop_sequence"].idxmax()
+    selected_trips = last_stops.loc[idx][["line_code", "trip_id"]]
+
+    # Dołącz trip_id do schedule i posortuj według stop_sequence
+    merged = schedule.merge(selected_trips, on=["line_code", "trip_id"], how="inner")
+    merged = merged.sort_values(["line_code", "trip_id", "stop_sequence"])
+
+    # Utwórz listę przystanków (stop_name) dla każdej linii w odpowiedniej kolejności
+    stations_lists = (
+        merged.groupby("line_code")["stop_name"]
+        .apply(list)
+        .reset_index()
+        .rename(columns={"stop_name": "station_sequence"})
+    )
+
+    stations_lists
+    return last_stops, stations_lists
 
 
 @app.cell(hide_code=True)
@@ -646,6 +685,27 @@ def _(schedule):
     return
 
 
+@app.cell
+def _(last_stops):
+    # Tabela pokazująca dla każdej linii (line_code) unikalne wartości końcowego stop_sequence (listy)
+
+    stop_seq_lists = (
+        last_stops.groupby("line_code")["stop_sequence"]
+        .agg(lambda x: sorted(set(x)))
+        .reset_index()
+        .rename(columns={"stop_sequence": "last_stop_sequences"})
+    )
+
+    stop_seq_lists
+    return
+
+
+@app.cell
+def _(schedule):
+    mo.ui.dataframe(schedule)
+    return
+
+
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
@@ -662,6 +722,7 @@ def _(
     calendar_dates,
     railway_data_clean,
     schedule,
+    stations_lists,
 ):
     # Eksport ramek do parquet
     output_dir = Path("data/processed")
@@ -684,6 +745,8 @@ def _(
     railway_data_clean.to_parquet(
         output_dir / "railway_data_clean.parquet", index=False
     )
+
+    stations_lists.to_parquet(output_dir / "stations_lists.parquet", index=False)
     return
 
 
