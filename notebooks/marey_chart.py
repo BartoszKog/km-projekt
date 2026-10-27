@@ -22,7 +22,7 @@ Zobacz docstring modułu ``marey_viz`` (quick start + kontrakt danych).
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="large")
+app = marimo.App(width="medium")
 
 with app.setup:
     from datetime import date
