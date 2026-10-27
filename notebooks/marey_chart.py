@@ -28,6 +28,7 @@ with app.setup:
     from datetime import date
     from pathlib import Path
     import sys
+    import urllib.request
 
     import marimo as mo
 
