@@ -31,6 +31,32 @@ with app.setup:
 
     import marimo as mo
 
+    # 1. Ścieżki lokalne (gdy uruchamiasz u siebie z folderu notebooks/)
+    _here = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+    for _p in (_here, _here.parent):
+        if str(_p) not in sys.path:
+            sys.path.insert(0, str(_p))
+
+    # 2. Fallback chmurowy (molab): jeśli nie ma marey_viz.py ani data/processed, pobierz z GitHuba
+    GITHUB_RAW = "https://raw.githubusercontent.com/BartoszKog/km-projekt/main"
+
+    if not (_here / "marey_viz.py").exists() and not (_here.parent / "marey_viz.py").exists():
+        urllib.request.urlretrieve(f"{GITHUB_RAW}/marey_viz.py", "marey_viz.py")
+
+    if not Path("data/processed").exists() and not (_here.parent / "data/processed").exists():
+        Path("data/processed").mkdir(parents=True, exist_ok=True)
+        for _fname in [
+            "schedule.parquet",
+            "calendar_dates.parquet",
+            "stations_lists.parquet",
+            "railway_data_clean.parquet",
+            "km_line_geometries.parquet",
+        ]:
+            urllib.request.urlretrieve(
+                f"{GITHUB_RAW}/data/processed/{_fname}",
+                f"data/processed/{_fname}",
+            )
+
     from marey_viz import (
         DEFAULT_KOLORY_LINII_KML,
         corridor_dropdown_options,
