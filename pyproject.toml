@@ -1,7 +1,7 @@
 [project]
 name = "km-projekt"
 version = "0.1.0"
-description = "Add your description here"
+description = "Projekt analizy komunikacji KML"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,9 +10,12 @@ dependencies = [
     "pandas>=3.1.0",
     "plotly>=7.1.0",
     "pyarrow>=16.0.0",
-    "folium>=0.20.0",
+    "folium>=0.12",
     "altair>=6.3.0",
     "networkx>=3.7",
+    "matplotlib>=3.11.2",
+    "mapclassify>=2.11.0",
+    "openlayers>=0.1.6",
 ]
 
 [build-system]

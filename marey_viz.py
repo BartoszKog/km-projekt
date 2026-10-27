@@ -828,7 +828,6 @@ def marey_summary(result: MareyResult) -> Any:
         **Wybrany kurs:** `{sel_meta["trip_short_name"]}` · linia **{sel_meta["line_code"]}**  
         Zakres wzdłuż kursu: **{result.station_list[0]}** → **{result.station_list[-1]}**
         ({len(result.station_list)} stacji na osi Y)  
-        Ten sam kierunek: **{result.n_same}** · Przeciwny kierunek: **{result.n_opp}**  
         Okno czasowe liczone tylko na widocznych stacjach.  
         Poziomy odcinek = postój na stacji.
         """

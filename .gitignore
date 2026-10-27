@@ -19,3 +19,9 @@ notes/
 __marimo__/
 
 bash.exe.stackdump
+
+notebooks/layouts/
+
+# notebooks
+traffic_potential.py
+notebooks/mld_kml_communication.py

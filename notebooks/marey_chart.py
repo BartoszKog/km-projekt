@@ -49,11 +49,6 @@ def _():
 
     Wybierz **datę**, **linię** i **kurs**, potem **zakres stacji wzdłuż tego kursu**
     (kolejność = kierunek jazdy).
-
-    Zakładki: wykres · mapa tras · tabela kursów.
-
-    Logika UI jest w module **`marey_viz`** (`load_marey_data`, `marey_explorer`,
-    `marey_panel`, `marey_explorer_form`) — ten notebook to tylko interaktywny wiring.
     """)
     return
 
